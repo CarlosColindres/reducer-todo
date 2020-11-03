@@ -1,51 +1,34 @@
-import React, {useState} from 'react';
+import React, {useReducer} from 'react';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList'
-
-const initialListState = []
+import { reducer } from './reducers';
+import {setTodo, handleToggle, removeTodos} from './actions'
 
 const App = () => {
  
-  const [todos, setTodos] = useState(initialListState)
-
+  const [state, dispatch] = useReducer(reducer, [])
+  console.log(state)
   const addTodo = (todo) => {
-      setTodos(
-        [...todos, 
-        {
-          name: todo,
-          id: Math.random(),
-          completed: false
-          }
-        ]
-      )
+      dispatch(setTodo(
+        todo
+      ))
   }
 
   const finishTodo = todoId => {
-      setTodos(
-      todos.map(item=>{
-        if(item.id === todoId) {
-          return {
-            ...item,
-            completed: !item.completed
-          }
-        } else {
-          return item
-        }
-      })
-    )
+      dispatch(handleToggle(
+      todoId
+    ))
   }
 
   const clearTodos = () => {
-    setTodos(
-      todos.filter(item =>(!item.completed))
-    )
+    dispatch(removeTodos())
   }
 
     return (
       <div className='todos-container'>
         <h1>Welcome to your Todo App!</h1>
         <TodoForm addTodo={addTodo} clearTodos={clearTodos}/>
-        <TodoList finishTodo={finishTodo} todoList={todos} clearTodos={clearTodos}/>
+        <TodoList finishTodo={finishTodo} todoList={state} clearTodos={clearTodos}/>
       </div>
     );
 }
